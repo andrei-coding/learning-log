@@ -1,30 +1,65 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.urls import reverse 
+from django.urls import reverse
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
+
 def logout_view(request):
-    """Faz um Logout do Usuário."""
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
+
 def register(request):
-    """Cadastra um novo usuário."""
-    
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('index'))
-    
-    if request.method != 'POST':
-        
-        form = UserCreationForm()
-    else:
+
+    form = UserCreationForm()
+
+    if request.method == 'POST':
         form = UserCreationForm(data=request.POST)
+
         if form.is_valid():
             new_user = form.save()
-            authenticate_user = authenticate(username=new_user.username, password = request.POST.get('password1'))
-            login(request, authenticate_user)
-            return HttpResponseRedirect(reverse('index'))
-    
-    context = {'form': form}
-    return render(request, 'users/register.html', context)
+
+            username = new_user.username
+            password = request.POST.get('password1')
+
+            authenticated_user = authenticate(
+                request,
+                username=username,
+                password=password
+            )
+
+            if authenticated_user is not None:
+                login(request, authenticated_user)
+                return HttpResponseRedirect(reverse('index'))
+
+            # fallback seguro
+            return HttpResponseRedirect(reverse('login'))
+
+    return render(request, 'users/register.html', {'form': form})
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('index'))
+
+    error = None
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                error = "Usuário ou senha inválidos"
+        else:
+            error = "Preencha todos os campos"
+
+    return render(request, 'users/login.html', {'error': error})
