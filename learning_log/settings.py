@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ra#)fy39#(b#i@eey(@@*umyzboh*5ma)ab&kt4p$(5b80*-sp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -125,3 +125,7 @@ BOOTSTRAP3 = {
     'include_jquery': True
 
 }
+
+import os
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
