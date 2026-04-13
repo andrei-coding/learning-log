@@ -130,3 +130,9 @@ import os
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://learning-log.onrender.com'
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
