@@ -10,7 +10,7 @@
         <p class="aviso-error" style="color: red;">*As senhas digitadas precisam estar iguais*;</p>
     {% endif %}
     <form action="{% url 'register' %}" method="post" class="ul-none form">
-    {%csrf_token%}
+    {% csrf_token %}
     {% bootstrap_form form %}
 
     {% buttons %}
